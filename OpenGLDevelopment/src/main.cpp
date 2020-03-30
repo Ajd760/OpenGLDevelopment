@@ -112,23 +112,36 @@ int main()
 
 
 	// Create vertex and buffer data, configure vertex attributes
-	// ----------------------------------------------------
-	// Create triangle
+	// -----------------------------------------------------------
+	// Create rectangle
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
+		0.5f, 0.5f, 0.0f, //top right
+		0.5f, -0.5f, 0.0f, //bottom right
+		-0.5f, -0.5f, 0.0f, //bottom left
+		-0.5f, 0.5f, 0.0f //top left
+	};
+	
+	// Indices to create 2 triangles forming the rectangle
+	unsigned int indices[] = {
+		0, 1, 3, //first triangle
+		1, 2, 3  //second triangle
 	};
 
 	// Create and bind a Vertex Buffer Object and Vertex Array Object, and give them the data in the vertices[] array
-	unsigned int VBO, VAO;
+	// Also create an Element Buffer Object to hold
+	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
-	// Bind the Vertex Array Object first, then bind/set the Vertex buffer object
+	// Bind the Vertex Array Object first, then bind/set the Vertex buffer object, then the element buffer object
 	glBindVertexArray(VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// glVertexAttribPointer tells openGL how to process the vertex array data (starting at psition 0 in the array, stride of 3, data values are floats, etc)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
@@ -140,7 +153,8 @@ int main()
 	// ** Can unbind the VAO so that other VAO calls won't accidentally modify this VAO, however this rarely happens since 
 	//		modifying other VAOs require a call to glBindVertexArray anyways
 	glBindVertexArray(0);
-
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in WIREFRAME mode
+	// -----------------------------------------------------------
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
@@ -155,7 +169,8 @@ int main()
 		// Draw a triangle
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);				// Not really necessary to bind every loop since we only have a single VAO right now
-		glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, 
+		//glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
 		// glBindVertexArray(0);  //don't need to unbind every time
 
 		// Check/call events and swap buffers
@@ -166,6 +181,7 @@ int main()
 	// Deallocate everything before program end
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 	return 0;
