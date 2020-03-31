@@ -1,3 +1,7 @@
+/// Next TODO:
+// Implement GLFW Window wrapper class
+
+
 /*
 * Include glad before GLFW, otherwise glad will bark about already including opengl headers
 */
