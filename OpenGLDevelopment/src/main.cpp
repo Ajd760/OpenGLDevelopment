@@ -1,3 +1,5 @@
+//LastPage: 51
+
 /// Next TODO:
 // Implement GLFW Window wrapper class
 
@@ -27,9 +29,10 @@ const char* vertShaderSrc = "#version 330 core\n"
 						"}\n\0";
 const char* fragShaderSrc = "#version 330 core\n"
 						"out vec4 FragColor;\n"
+						"uniform vec4 ourColor;\n"
 						"void main()\n"
 						"{\n"
-						"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+						"   FragColor = ourColor;\n"
 						"}\n\0";
 
 
@@ -62,6 +65,10 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // Set callback function to be called each time window is resized
 	/// End Init stuff
 
+	// Check for curiousity max # of vec4 vertex attributes supported
+	GLint numAttribs;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numAttribs);
+	std::cout << "Max number of vertex attributes supported: " << numAttribs << std::endl;
 
 	// Compile and Link Shaders
 	// ----------------------------------------------------
@@ -70,7 +77,6 @@ int main()
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertShaderSrc, NULL);
 	glCompileShader(vertexShader);
-
 	// Check vertex shader compilation
 	int success;
 	char infoLog[512];
@@ -86,7 +92,6 @@ int main()
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragShaderSrc, NULL);
 	glCompileShader(fragmentShader);
-
 	// Check fragment shader compilation
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -101,7 +106,6 @@ int main()
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
-
 	// Check shader program linking for errors
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
@@ -157,7 +161,7 @@ int main()
 	// ** Can unbind the VAO so that other VAO calls won't accidentally modify this VAO, however this rarely happens since 
 	//		modifying other VAOs require a call to glBindVertexArray anyways
 	glBindVertexArray(0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in WIREFRAME mode
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in WIREFRAME mode
 	// -----------------------------------------------------------
 
 	// Main loop
@@ -170,9 +174,18 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);	//Clear screen with a grey/green color
 		glClear(GL_COLOR_BUFFER_BIT);			// Actually clear the screen
 
-		// Draw a triangle
+		// Use the shader program we compiled
 		glUseProgram(shaderProgram);
+
+		// Render a color change over time
+		float timeVal = glfwGetTime();
+		float redVal = (sin(timeVal) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor"); //get the uniform variable named ourColor from the fragment shader compiled and linked to shaderProgram
+		glUniform4f(vertexColorLocation, redVal, 0.0f, 0.0f, 1.0f);
+		
 		glBindVertexArray(VAO);				// Not really necessary to bind every loop since we only have a single VAO right now
+		
+		// Draw a triangle
 		//glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
 		// glBindVertexArray(0);  //don't need to unbind every time
