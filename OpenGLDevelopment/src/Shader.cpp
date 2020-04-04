@@ -21,7 +21,7 @@ Shader::~Shader()
 
 void Shader::createFromString(const GLchar* vertexCode, const GLchar* fragmentCode)
 {
-	compile_shader(vertexCode, fragmentCode);
+	compile_and_link_shader(vertexCode, fragmentCode);
 }
 
 void Shader::createFromFiles(const char* vertexLocation, const char* fragmentLocation)
@@ -32,7 +32,7 @@ void Shader::createFromFiles(const char* vertexLocation, const char* fragmentLoc
 	const GLchar* vertCode = vertStream.c_str();
 	const GLchar* fragCode = fragStream.c_str();
 
-	compile_shader(vertCode, fragCode);
+	compile_and_link_shader(vertCode, fragCode);
 }
 
 std::string Shader::readFile(const char* fileLocation)
@@ -50,7 +50,7 @@ std::string Shader::readFile(const char* fileLocation)
 		std::string line = "";
 		while (!fileStream.eof())
 		{
-			std::getline(fileStream, line);
+			std::getline(fileStream, line); //This is probably inefficient? -- TODO: change to sstream reading or something
 			contentRead.append(line + "\n");
 		}
 
@@ -59,12 +59,16 @@ std::string Shader::readFile(const char* fileLocation)
 	}
 }
 
-void Shader::compile_shader(const char* vertexCode, const char* fragmentCode)
+// Compiles, links, and validates the shaders given by vertexCode and fragmentCode parameters
+// This function calls add_shader
+void Shader::compile_and_link_shader(const GLchar* vertexCode, const GLchar* fragmentCode)
 {
+	// error checking variables
 	GLint result = 0;
 	GLchar errorLog[1024] = { 0 };
 
-	shader_ID = glCreateProgram();
+	// Create the shader program
+	this->shader_ID = glCreateProgram();
 	if (!shader_ID)
 	{
 		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
@@ -72,9 +76,35 @@ void Shader::compile_shader(const char* vertexCode, const char* fragmentCode)
 		return;
 	}
 
-	add_shader(shader_ID, vertexCode, GL_VERTEX_SHADER);
-	add_shader(shader_ID, fragmentCode, GL_FRAGMENT_SHADER);
+	// Compile vertex shader
+	GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertShader, 1, &vertexCode, NULL);
+	glCompileShader(vertShader);
+	glGetShaderiv(vertShader, GL_COMPILE_STATUS, &result);
+	if (!result)
+	{
+		glGetShaderInfoLog(vertShader, sizeof(errorLog), NULL, errorLog);
+		std::cout << "Error compiling vertex shader: " << errorLog << std::endl;
+		return;
+	}
 
+	// Compile fragment shader
+	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragShader, 1, &fragmentCode, NULL);
+	glCompileShader(fragShader);
+	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &result);
+	if (!result)
+	{
+		glGetShaderInfoLog(fragShader, sizeof(errorLog), NULL, errorLog);
+		std::cout << "Error compiling fragment shader: " << errorLog << std::endl;
+		return;
+	}
+
+	// Attach both shaders to the shader program
+	glAttachShader(shader_ID, vertShader);
+	glAttachShader(shader_ID, fragShader);
+	
+	// Link the shader program
 	glLinkProgram(shader_ID);
 	glGetProgramiv(shader_ID, GL_LINK_STATUS, &result);
 	if (!result)
@@ -84,6 +114,7 @@ void Shader::compile_shader(const char* vertexCode, const char* fragmentCode)
 		return;
 	}
 
+	// Validate the shader program
 	glValidateProgram(shader_ID);
 	glGetProgramiv(shader_ID, GL_VALIDATE_STATUS, &result);
 	if (!result)
@@ -93,12 +124,19 @@ void Shader::compile_shader(const char* vertexCode, const char* fragmentCode)
 		return;
 	}
 
+	// Set references to uniform variables
 	uniform_model = glGetUniformLocation(shader_ID, "model");
 	uniform_projection = glGetUniformLocation(shader_ID, "projection");
 	uniform_view = glGetUniformLocation(shader_ID, "view");
+
+	// Can delete the shaders after they have been linked into the program
+	glDeleteShader(vertShader);
+	glDeleteShader(fragShader);
 }
 
-void Shader::add_shader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
+/*	//Combined this funtion into compile_and_link_shader function, left for reference/backup
+// Compile and attach the shader to the current program
+void Shader::add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shaderType)
 {
 	GLuint theShader = glCreateShader(shaderType);
 
@@ -123,6 +161,7 @@ void Shader::add_shader(GLuint theProgram, const char* shaderCode, GLenum shader
 
 	glAttachShader(theProgram, theShader);
 }
+*/
 
 GLuint Shader::getProjectionLocation()
 {

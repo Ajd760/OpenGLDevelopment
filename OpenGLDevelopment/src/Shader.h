@@ -27,7 +27,7 @@ public:
 private:
 	GLuint shader_ID, uniform_projection, uniform_model, uniform_view;
 
-	void compile_shader(const char* vertexCode, const char* fragmentCode);
-	void add_shader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
+	void compile_and_link_shader(const GLchar* vertexCode, const GLchar* fragmentCode);
+	void add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shaderType);
 };
 #endif // !SHADER_H
