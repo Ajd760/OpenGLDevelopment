@@ -36,7 +36,7 @@ std::string Shader::ReadFile(const char* fileLocation)
 
 	if (!fileStream.is_open())
 	{
-		printf("Failed to open file %s!", fileLocation);
+		std::cout << "Failed to open file: " << fileLocation << std::endl;
 		return NULL;
 	}
 	else
@@ -61,7 +61,8 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	shader_ID = glCreateProgram();
 	if (!shader_ID)
 	{
-		printf("Error creating shader program...\n");
+		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
+		std::cout << "Error creating shader program: " << errorLog << std::endl;
 		return;
 	}
 
@@ -73,7 +74,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	if (!result)
 	{
 		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
-		printf("Error linking program: '%s'\n", errorLog);
+		std::cout << "Error linking program: " << errorLog << std::endl;
 		return;
 	}
 
@@ -82,7 +83,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	if (!result)
 	{
 		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
-		printf("Error validating program: '%s'\n", errorLog);
+		std::cout << "Error validating shader program: " << errorLog << std::endl;
 		return;
 	}
 
@@ -110,7 +111,7 @@ void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderT
 	if (!result)
 	{
 		glGetShaderInfoLog(theShader, sizeof(errorLog), NULL, errorLog);
-		printf("Error compiling the %d shader - '%s'\n", shaderType, errorLog);
+		std::cout << "Error compiling a " << shaderType << " shader: " << errorLog << std::endl;
 		return;
 	}
 
@@ -136,7 +137,7 @@ void Shader::UseShader()
 {
 	if (shader_ID == 0)
 	{
-		printf("Error in Shader::UseShader --> shader_ID == %i", shader_ID);
+		std::cout << "Error in Shader::UserShader --> shader_ID == " << shader_ID << std::endl;
 	}
 	else
 	{
@@ -150,7 +151,7 @@ void Shader::ClearShader()
 {
 	if (shader_ID == 0)
 	{
-		printf("Error in Shader::ClearShader --> shader_ID == %i (tried to clear unallocated shader)", shader_ID);
+		std::cout << "Error in Shader::ClearShader --> shader_ID == " << shader_ID << ", (tried to clear unallocated shader)" << std::endl;
 	}
 	else
 	{

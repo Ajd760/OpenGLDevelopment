@@ -67,7 +67,6 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // Set callback function to be called each time window is resized
 	/// End Init stuff
 
-
 	// Compile and Link Shaders
 	// ----------------------------------------------------
 	// Compile vertex shader
