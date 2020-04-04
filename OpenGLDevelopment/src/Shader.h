@@ -20,6 +20,7 @@ public:
 	GLuint getProjectionLocation() const;
 	GLuint getModelLocation() const;
 	GLuint getViewLocation() const;
+	GLuint getID() const;
 	void setBool(const std::string &name, bool val) const;
 	void setInt(const std::string &name, int val) const;
 	void setFloat(const std::string &name, float val) const;

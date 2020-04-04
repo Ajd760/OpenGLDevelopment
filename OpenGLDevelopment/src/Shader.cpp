@@ -15,7 +15,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragPath)
 
 Shader::~Shader()
 {
-	clearShader();
+
 }
 
 
@@ -178,6 +178,11 @@ GLuint Shader::getViewLocation() const
 	return uniform_view;
 }
 
+GLuint Shader::getID() const
+{
+	return shader_ID;
+}
+
 // Uniform setting functions
 void Shader::setBool(const std::string &name, bool val) const
 {
@@ -217,6 +222,7 @@ void Shader::clearShader()
 	else
 	{
 		glDeleteProgram(shader_ID);
+		std::cout << "Deleted shader program for shader_ID " << shader_ID << std::endl;
 		shader_ID = 0;
 	}
 
