@@ -17,9 +17,12 @@ public:
 	void createFromString(const GLchar* vertexCode, const GLchar* fragmentCode);
 	void createFromFiles(const char* vertexLocation, const char* fragmentLocation);
 	std::string readFile(const char* fileLocation);
-	GLuint getProjectionLocation();
-	GLuint getModelLocation();
-	GLuint getViewLocation();
+	GLuint getProjectionLocation() const;
+	GLuint getModelLocation() const;
+	GLuint getViewLocation() const;
+	void setBool(const std::string &name, bool val) const;
+	void setInt(const std::string &name, int val) const;
+	void setFloat(const std::string &name, float val) const;
 	void useShader();
 	void clearShader();
 
@@ -28,6 +31,8 @@ private:
 	GLuint shader_ID, uniform_projection, uniform_model, uniform_view;
 
 	void compile_and_link_shader(const GLchar* vertexCode, const GLchar* fragmentCode);
-	void add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shaderType);
+
+	//Combined this funtion into compile_and_link_shader function, left for reference/backup
+	//void add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shaderType);
 };
 #endif // !SHADER_H

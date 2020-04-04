@@ -60,7 +60,6 @@ std::string Shader::readFile(const char* fileLocation)
 }
 
 // Compiles, links, and validates the shaders given by vertexCode and fragmentCode parameters
-// This function calls add_shader
 void Shader::compile_and_link_shader(const GLchar* vertexCode, const GLchar* fragmentCode)
 {
 	// error checking variables
@@ -163,19 +162,36 @@ void Shader::add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shad
 }
 */
 
-GLuint Shader::getProjectionLocation()
+// Uniform getting functions
+GLuint Shader::getProjectionLocation() const
 {
 	return uniform_projection;
 }
 
-GLuint Shader::getModelLocation()
+GLuint Shader::getModelLocation() const
 {
 	return uniform_model;
 }
 
-GLuint Shader::getViewLocation()
+GLuint Shader::getViewLocation() const
 {
 	return uniform_view;
+}
+
+// Uniform setting functions
+void Shader::setBool(const std::string &name, bool val) const
+{
+	glUniform1i(glGetUniformLocation(this->shader_ID, name.c_str()), (int)val);
+}
+
+void Shader::setInt(const std::string &name, int val) const
+{
+	glUniform1i(glGetUniformLocation(this->shader_ID, name.c_str()), val);
+}
+
+void Shader::setFloat(const std::string &name, float val) const
+{
+	glUniform1f(glGetUniformLocation(this->shader_ID, name.c_str()), val);
 }
 
 void Shader::useShader()
