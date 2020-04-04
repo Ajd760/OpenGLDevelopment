@@ -158,7 +158,6 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //This last param is the offset of where the color data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(1);
 
-
 	// Unbind the VBO since the call to glVertexAttribPointer registered the VBO as the vertex attribute's bound VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
