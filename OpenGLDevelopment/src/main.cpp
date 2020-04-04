@@ -1,6 +1,7 @@
 /// Next TODO:
 // Implement GLFW Window wrapper class
 
+//Page 53
 
 /*
 * Include glad before GLFW, otherwise glad will bark about already including opengl headers
@@ -21,16 +22,19 @@ const unsigned int SCREEN_HEIGHT = 600;
 // Ad hoc shaders - temporary
 const char* vertShaderSrc = "#version 330 core\n"
 						"layout (location = 0) in vec3 aPos;\n"
+						"layout (location = 1) in vec3 aColor;\n"
+						"out vec3 ourColor;\n"
 						"void main()\n"
 						"{\n"
-						"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+						"	gl_Position = vec4(aPos, 1.0);\n"
+						"	ourColor = aColor;\n"
 						"}\n\0";
 const char* fragShaderSrc = "#version 330 core\n"
 						"out vec4 FragColor;\n"
-						"uniform vec4 ourColor;\n"
+						"in vec3 ourColor;\n"
 						"void main()\n"
 						"{\n"
-						"   FragColor = ourColor;\n"
+						"   FragColor = vec4(ourColor, 1.0f);\n"
 						"}\n\0";
 
 
@@ -71,7 +75,6 @@ int main()
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertShaderSrc, NULL);
 	glCompileShader(vertexShader);
-
 	// Check vertex shader compilation
 	int success;
 	char infoLog[512];
@@ -87,7 +90,6 @@ int main()
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragShaderSrc, NULL);
 	glCompileShader(fragmentShader);
-
 	// Check fragment shader compilation
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -102,7 +104,6 @@ int main()
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
-
 	// Check shader program linking for errors
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success)
@@ -120,10 +121,11 @@ int main()
 	// -----------------------------------------------------------
 	// Create rectangle
 	float vertices[] = {
-		0.5f, 0.5f, 0.0f, //top right
-		0.5f, -0.5f, 0.0f, //bottom right
-		-0.5f, -0.5f, 0.0f, //bottom left
-		-0.5f, 0.5f, 0.0f //top left
+		//positions		   // colors
+		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //top right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, //bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, //bottom left
+		-0.5f, 0.5f, 0.0f, 0.5, 0.5, 0.0f //top left
 	};
 	
 	// Indices to create 2 triangles forming the rectangle
@@ -148,9 +150,14 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	// glVertexAttribPointer tells openGL how to process the vertex array data (starting at psition 0 in the array, stride of 3, data values are floats, etc)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
+	// glVertexAttribPointer tells openGL how to process the vertex array data (starting at position 0 in the array, attributes have 3 values (vec3), data values are floats, stride of 3*varialble size, etc)
+	// The position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(0);
+	// The color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //This last param is the offset of where the color data begins in the buffer, and requires the cast (void*)
+	glEnableVertexAttribArray(1);
+
 
 	// Unbind the VBO since the call to glVertexAttribPointer registered the VBO as the vertex attribute's bound VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
