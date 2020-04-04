@@ -7,29 +7,35 @@ Shader::Shader()
 	uniform_projection = 0;
 }
 
+Shader::Shader(const GLchar* vertexPath, const GLchar* fragPath)
+{
+	Shader();
+	createFromFiles(vertexPath, fragPath);
+}
+
 Shader::~Shader()
 {
-	ClearShader();
+	clearShader();
 }
 
 
-void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode)
+void Shader::createFromString(const GLchar* vertexCode, const GLchar* fragmentCode)
 {
-	CompileShader(vertexCode, fragmentCode);
+	compile_shader(vertexCode, fragmentCode);
 }
 
-void Shader::CreateFromFiles(const char* vertexLocation, const char* fragmentLocation)
+void Shader::createFromFiles(const char* vertexLocation, const char* fragmentLocation)
 {
-	std::string vertStream = ReadFile(vertexLocation);
-	std::string fragStream = ReadFile(fragmentLocation);
+	std::string vertStream = readFile(vertexLocation);
+	std::string fragStream = readFile(fragmentLocation);
 
-	const char* vertCode = vertStream.c_str();
-	const char* fragCode = fragStream.c_str();
+	const GLchar* vertCode = vertStream.c_str();
+	const GLchar* fragCode = fragStream.c_str();
 
-	CompileShader(vertCode, fragCode);
+	compile_shader(vertCode, fragCode);
 }
 
-std::string Shader::ReadFile(const char* fileLocation)
+std::string Shader::readFile(const char* fileLocation)
 {
 	std::string contentRead;
 	std::ifstream fileStream(fileLocation, std::ios::in);
@@ -53,7 +59,7 @@ std::string Shader::ReadFile(const char* fileLocation)
 	}
 }
 
-void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
+void Shader::compile_shader(const char* vertexCode, const char* fragmentCode)
 {
 	GLint result = 0;
 	GLchar errorLog[1024] = { 0 };
@@ -66,8 +72,8 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 		return;
 	}
 
-	AddShader(shader_ID, vertexCode, GL_VERTEX_SHADER);
-	AddShader(shader_ID, fragmentCode, GL_FRAGMENT_SHADER);
+	add_shader(shader_ID, vertexCode, GL_VERTEX_SHADER);
+	add_shader(shader_ID, fragmentCode, GL_FRAGMENT_SHADER);
 
 	glLinkProgram(shader_ID);
 	glGetProgramiv(shader_ID, GL_LINK_STATUS, &result);
@@ -92,7 +98,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	uniform_view = glGetUniformLocation(shader_ID, "view");
 }
 
-void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
+void Shader::add_shader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
 {
 	GLuint theShader = glCreateShader(shaderType);
 
@@ -118,22 +124,22 @@ void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderT
 	glAttachShader(theProgram, theShader);
 }
 
-GLuint Shader::GetProjectionLocation()
+GLuint Shader::getProjectionLocation()
 {
 	return uniform_projection;
 }
 
-GLuint Shader::GetModelLocation()
+GLuint Shader::getModelLocation()
 {
 	return uniform_model;
 }
 
-GLuint Shader::GetViewLocation()
+GLuint Shader::getViewLocation()
 {
 	return uniform_view;
 }
 
-void Shader::UseShader()
+void Shader::useShader()
 {
 	if (shader_ID == 0)
 	{
@@ -147,7 +153,7 @@ void Shader::UseShader()
 }
 
 
-void Shader::ClearShader()
+void Shader::clearShader()
 {
 	if (shader_ID == 0)
 	{
