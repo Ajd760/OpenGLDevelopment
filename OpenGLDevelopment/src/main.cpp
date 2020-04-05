@@ -123,7 +123,7 @@ int main()
 		//glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);
 
 		//2. Set a horizontal offset via a uniform that we add to the vertex shader
-		float xOffset = 0.5f;
+		float xOffset = 0.0f; //set triangle back to center but left this offset in
 		shader.setFloat("xOffset", xOffset);
 
 		// Draw a triangle
