@@ -122,7 +122,9 @@ int main()
 		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 		//glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);
 
-
+		//2. Set a horizontal offset via a uniform that we add to the vertex shader
+		float xOffset = 0.5f;
+		shader.setFloat("xOffset", xOffset);
 
 		// Draw a triangle
 		glBindVertexArray(VAO);				// Not really necessary to bind every loop since we only have a single VAO right now
