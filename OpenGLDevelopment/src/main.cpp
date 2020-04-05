@@ -20,26 +20,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
-/*
-// Ad hoc shaders - temporary
-const char* vertShaderSrc = "#version 330 core\n"
-						"layout (location = 0) in vec3 aPos;\n"
-						"layout (location = 1) in vec3 aColor;\n"
-						"out vec3 ourColor;\n"
-						"void main()\n"
-						"{\n"
-						"	gl_Position = vec4(aPos, 1.0);\n"
-						"	ourColor = aColor;\n"
-						"}\n\0";
-const char* fragShaderSrc = "#version 330 core\n"
-						"out vec4 FragColor;\n"
-						"in vec3 ourColor;\n"
-						"void main()\n"
-						"{\n"
-						"   FragColor = vec4(ourColor, 1.0f);\n"
-						"}\n\0";
-*/
-
 
 int main()
 {
@@ -78,16 +58,15 @@ int main()
 
 	// Create vertex and buffer data, configure vertex attributes
 	// -----------------------------------------------------------
-	// Create rectangle
+	// Create a single triangle
 	float vertices[] = {
 		//positions		   // colors
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //top right
+		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //top
 		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, //bottom right
 		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, //bottom left
-		-0.5f, 0.5f, 0.0f, 0.5, 0.5, 0.0f //top left
 	};
 	
-	// Indices to create 2 triangles forming the rectangle
+	// Indices to create 2 triangles if using an EBO
 	unsigned int indices[] = {
 		0, 1, 3, //first triangle
 		1, 2, 3  //second triangle
@@ -147,8 +126,8 @@ int main()
 
 		// Draw a triangle
 		glBindVertexArray(VAO);				// Not really necessary to bind every loop since we only have a single VAO right now
-		//glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
+		glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
 		// glBindVertexArray(0);  //don't need to unbind every time
 
 		// Check/call events and swap buffers
