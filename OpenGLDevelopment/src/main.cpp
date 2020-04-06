@@ -1,7 +1,7 @@
 /// Next TODO:
 // Implement GLFW Window wrapper class
 
-// Page
+// Page 63
 
 /*
 * Include glad before GLFW, otherwise glad will bark about already including opengl headers
@@ -11,6 +11,9 @@
 #include <iostream>
 
 #include "Shader.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 
 void processInput(GLFWwindow* window);
