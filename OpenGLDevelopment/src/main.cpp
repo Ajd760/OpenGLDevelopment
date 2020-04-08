@@ -13,8 +13,7 @@
 
 #include "Shader.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+
 
 
 void processInput(GLFWwindow* window);
@@ -62,7 +61,7 @@ int main()
 
 	// Create vertex and buffer data, configure vertex attributes
 	// -----------------------------------------------------------
-	// Create a box
+	// Create a box, with 3 types of attributes - position, color, and texture coords
 	float vertices[] = {
 		//positions		     // colors
 		 0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, //top right
@@ -97,9 +96,14 @@ int main()
 	// The position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(0);
+
 	// The color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //This last param is the offset of where the color data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(1);
+
+	// The texture attribute
+	
+
 
 	// Unbind the VBO since the call to glVertexAttribPointer registered the VBO as the vertex attribute's bound VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

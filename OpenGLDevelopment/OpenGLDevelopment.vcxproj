@@ -141,6 +141,7 @@
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\shader.frag" />
@@ -149,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\stb_image.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg" />
