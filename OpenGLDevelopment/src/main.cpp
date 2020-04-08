@@ -1,7 +1,8 @@
 /// Next TODO:
+// Implement Texture wrapper class
 // Implement GLFW Window wrapper class
 
-// Page 63
+// Page 
 
 /*
 * Include glad before GLFW, otherwise glad will bark about already including opengl headers
@@ -61,12 +62,13 @@ int main()
 
 	// Create vertex and buffer data, configure vertex attributes
 	// -----------------------------------------------------------
-	// Create a single triangle
+	// Create a box
 	float vertices[] = {
-		//positions		   // colors
-		0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //top
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, //bottom right
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, //bottom left
+		//positions		     // colors
+		 0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, //top right
+		 0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, //bottom right
+		-0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, //bottom left
+		-0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f //top left
 	};
 	
 	// Indices to create 2 triangles if using an EBO
@@ -131,8 +133,8 @@ int main()
 
 		// Draw a triangle
 		glBindVertexArray(VAO);				// Not really necessary to bind every loop since we only have a single VAO right now
-		glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
+		//glDrawArrays(GL_TRIANGLES, 0, 3);	//Drawing a triangle, starting at index 0 of the bound array, drawing 3 vertices
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //Drawing 2 triangles to form a rectangle with an EBO
 		// glBindVertexArray(0);  //don't need to unbind every time
 
 		// Check/call events and swap buffers
