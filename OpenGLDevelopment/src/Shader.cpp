@@ -2,9 +2,9 @@
 
 Shader::Shader()
 {
-	shader_ID = 0;
-	uniform_model = 0;
-	uniform_projection = 0;
+	_shader_ID = 0;
+	_uniform_model = 0;
+	_uniform_projection = 0;
 }
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragPath)
@@ -67,10 +67,10 @@ void Shader::compile_and_link_shader(const GLchar* vertexCode, const GLchar* fra
 	GLchar errorLog[1024] = { 0 };
 
 	// Create the shader program
-	this->shader_ID = glCreateProgram();
-	if (!shader_ID)
+	this->_shader_ID = glCreateProgram();
+	if (!_shader_ID)
 	{
-		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
+		glGetProgramInfoLog(_shader_ID, sizeof(errorLog), NULL, errorLog);
 		std::cout << "Error creating shader program: " << errorLog << std::endl;
 		return;
 	}
@@ -100,33 +100,33 @@ void Shader::compile_and_link_shader(const GLchar* vertexCode, const GLchar* fra
 	}
 
 	// Attach both shaders to the shader program
-	glAttachShader(shader_ID, vertShader);
-	glAttachShader(shader_ID, fragShader);
+	glAttachShader(_shader_ID, vertShader);
+	glAttachShader(_shader_ID, fragShader);
 	
 	// Link the shader program
-	glLinkProgram(shader_ID);
-	glGetProgramiv(shader_ID, GL_LINK_STATUS, &result);
+	glLinkProgram(_shader_ID);
+	glGetProgramiv(_shader_ID, GL_LINK_STATUS, &result);
 	if (!result)
 	{
-		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
+		glGetProgramInfoLog(_shader_ID, sizeof(errorLog), NULL, errorLog);
 		std::cout << "Error linking program: " << errorLog << std::endl;
 		return;
 	}
 
 	// Validate the shader program
-	glValidateProgram(shader_ID);
-	glGetProgramiv(shader_ID, GL_VALIDATE_STATUS, &result);
+	glValidateProgram(_shader_ID);
+	glGetProgramiv(_shader_ID, GL_VALIDATE_STATUS, &result);
 	if (!result)
 	{
-		glGetProgramInfoLog(shader_ID, sizeof(errorLog), NULL, errorLog);
+		glGetProgramInfoLog(_shader_ID, sizeof(errorLog), NULL, errorLog);
 		std::cout << "Error validating shader program: " << errorLog << std::endl;
 		return;
 	}
 
 	// Set references to uniform variables
-	uniform_model = glGetUniformLocation(shader_ID, "model");
-	uniform_projection = glGetUniformLocation(shader_ID, "projection");
-	uniform_view = glGetUniformLocation(shader_ID, "view");
+	_uniform_model = glGetUniformLocation(_shader_ID, "model");
+	_uniform_projection = glGetUniformLocation(_shader_ID, "projection");
+	_uniform_view = glGetUniformLocation(_shader_ID, "view");
 
 	// Can delete the shaders after they have been linked into the program
 	glDeleteShader(vertShader);
@@ -165,49 +165,49 @@ void Shader::add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shad
 // Uniform getting functions
 GLuint Shader::getProjectionLocation() const
 {
-	return uniform_projection;
+	return _uniform_projection;
 }
 
 GLuint Shader::getModelLocation() const
 {
-	return uniform_model;
+	return _uniform_model;
 }
 
 GLuint Shader::getViewLocation() const
 {
-	return uniform_view;
+	return _uniform_view;
 }
 
 GLuint Shader::getID() const
 {
-	return shader_ID;
+	return _shader_ID;
 }
 
 // Uniform setting functions
 void Shader::setBool(const std::string &name, bool val) const
 {
-	glUniform1i(glGetUniformLocation(this->shader_ID, name.c_str()), (int)val);
+	glUniform1i(glGetUniformLocation(this->_shader_ID, name.c_str()), (int)val);
 }
 
 void Shader::setInt(const std::string &name, int val) const
 {
-	glUniform1i(glGetUniformLocation(this->shader_ID, name.c_str()), val);
+	glUniform1i(glGetUniformLocation(this->_shader_ID, name.c_str()), val);
 }
 
 void Shader::setFloat(const std::string &name, float val) const
 {
-	glUniform1f(glGetUniformLocation(this->shader_ID, name.c_str()), val);
+	glUniform1f(glGetUniformLocation(this->_shader_ID, name.c_str()), val);
 }
 
 void Shader::useShader()
 {
-	if (shader_ID == 0)
+	if (_shader_ID == 0)
 	{
-		std::cout << "Error in Shader::UserShader --> shader_ID == " << shader_ID << std::endl;
+		std::cout << "Error in Shader::UserShader --> shader_ID == " << _shader_ID << std::endl;
 	}
 	else
 	{
-		glUseProgram(shader_ID);
+		glUseProgram(_shader_ID);
 	}
 
 }
@@ -215,17 +215,17 @@ void Shader::useShader()
 
 void Shader::clearShader()
 {
-	if (shader_ID == 0)
+	if (_shader_ID == 0)
 	{
-		std::cout << "Error in Shader::ClearShader --> shader_ID == " << shader_ID << ", (tried to clear unallocated shader)" << std::endl;
+		std::cout << "Error in Shader::ClearShader --> shader_ID == " << _shader_ID << ", (tried to clear unallocated shader)" << std::endl;
 	}
 	else
 	{
-		glDeleteProgram(shader_ID);
-		std::cout << "Deleted shader program for shader_ID " << shader_ID << std::endl;
-		shader_ID = 0;
+		glDeleteProgram(_shader_ID);
+		std::cout << "Deleted shader program for shader_ID " << _shader_ID << std::endl;
+		_shader_ID = 0;
 	}
 
-	uniform_model = 0;
-	uniform_projection = 0;
+	_uniform_model = 0;
+	_uniform_projection = 0;
 }

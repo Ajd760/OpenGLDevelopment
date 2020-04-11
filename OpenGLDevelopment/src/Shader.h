@@ -28,8 +28,8 @@ public:
 	void clearShader();
 
 
-private:
-	GLuint shader_ID, uniform_projection, uniform_model, uniform_view;
+protected:
+	GLuint _shader_ID, _uniform_projection, _uniform_model, _uniform_view;
 
 	void compile_and_link_shader(const GLchar* vertexCode, const GLchar* fragmentCode);
 

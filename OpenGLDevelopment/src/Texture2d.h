@@ -8,21 +8,21 @@
 
 class Texture2d
 {
-private:
-	GLuint texture_ID;
-	int width, height, num_channels;
-
 public:
 	unsigned char* data;
 	
 	Texture2d();
-	Texture2d(std::string filePath, int* width, int* height, int* nrChannels);
+	Texture2d(std::string filePath);
 	~Texture2d();
 
 	GLuint Texture2d::getID() const;
 	GLuint Texture2d::getWidth() const;
 	GLuint Texture2d::getHeight() const;
 	GLuint Texture2d::getNumChannels() const;
+
+protected:
+	GLuint _texture_ID;
+	int _width, _height, _num_channels;
 };
 
 
