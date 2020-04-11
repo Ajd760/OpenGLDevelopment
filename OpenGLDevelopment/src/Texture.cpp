@@ -1,3 +1,5 @@
+#include <string>
+
 #include "Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -9,7 +11,7 @@ Texture::Texture()
 	
 }
 
-Texture(std::string filePath, int* width, int* height, int* nrChannels)
+Texture::Texture(std::string filePath, int* width, int* height, int* nrChannels)
 {
 	// Load texture
 }

@@ -2,7 +2,7 @@
 // Implement Texture wrapper class
 // Implement GLFW Window wrapper class
 
-// Page 
+// Page 64
 
 /*
 * Include glad before GLFW, otherwise glad will bark about already including opengl headers
