@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "Shader.h"
-
+#include "Texture2d.h"
 
 
 
@@ -59,15 +59,20 @@ int main()
 	std::cout << "Shader created with ID " << shader.getID() << std::endl;
 	// -------------------------------------------------------------------------------------
 
+	// Create a texture using the new Texture2d class ------------------------------------------
+	Texture2d texture("container.jpg");
+	std::cout << "Texture2d created with ID " << texture.getID() << std::endl;
+	// -------------------------------------------------------------------------------------
+
 	// Create vertex and buffer data, configure vertex attributes
 	// -----------------------------------------------------------
 	// Create a box, with 3 types of attributes - position, color, and texture coords
 	float vertices[] = {
-		//positions		     // colors
-		 0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, //top right
-		 0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, //bottom right
-		-0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, //bottom left
-		-0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f //top left
+		//positions(x,y,z)	 // colors(r,g,b)  texture coords (s,t)
+		 0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   //top right
+		 0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  //bottom right
+		-0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //bottom left
+		-0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f //top left
 	};
 	
 	// Indices to create 2 triangles if using an EBO
@@ -94,15 +99,16 @@ int main()
 
 	// glVertexAttribPointer tells openGL how to process the vertex array data (starting at position 0 in the array, attributes have 3 values (vec3), data values are floats, stride of 3*varialble size, etc)
 	// The position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); //This last param is the offset of where the position data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(0);
 
 	// The color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //This last param is the offset of where the color data begins in the buffer, and requires the cast (void*)
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); //This last param is the offset of where the color data begins in the buffer, and requires the cast (void*)
 	glEnableVertexAttribArray(1);
 
 	// The texture attribute
-	
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 
 	// Unbind the VBO since the call to glVertexAttribPointer registered the VBO as the vertex attribute's bound VBO
@@ -124,6 +130,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);	//Clear screen with a grey/green color
 		glClear(GL_COLOR_BUFFER_BIT);			// Actually clear the screen
 		shader.useShader();
+		texture.bindTexture(); // teture is left bound in the constructor, so this is unnecessary, however I wanted to make sure I know how the binding works so I was playing around with this and the unbindTexture() function I created
 
 		// Create a color change from red to black and back to red based on time
 		//float timeVal = glfwGetTime();
