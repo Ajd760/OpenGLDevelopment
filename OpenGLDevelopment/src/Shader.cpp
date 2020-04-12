@@ -162,6 +162,9 @@ void Shader::add_shader(GLuint theProgram, const GLchar* shaderCode, GLenum shad
 }
 */
 
+// TODO: These getter functions may need to be changed to return references to the attributes if they are ever going to
+//   be used in opengl funcitons that change the state of a resource based on it's ID/uniform/etc 
+
 // Uniform getting functions
 GLuint Shader::getProjectionLocation() const
 {

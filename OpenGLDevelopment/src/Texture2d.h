@@ -12,7 +12,7 @@ public:
 	unsigned char* data;
 	
 	Texture2d();
-	Texture2d(std::string filePath);
+	Texture2d(std::string filePath, bool flip, bool alpha);
 	~Texture2d();
 
 	void Texture2d::bindTexture();

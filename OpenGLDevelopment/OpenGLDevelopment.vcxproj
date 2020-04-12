@@ -153,7 +153,9 @@
     <ClInclude Include="src\Texture2d.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="container.jpg" />
+    <Image Include="resources\textures\container.jpg" />
+    <Image Include="resources\textures\linux.png" />
+    <Image Include="resources\textures\smiley.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

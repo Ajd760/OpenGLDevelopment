@@ -59,10 +59,13 @@ int main()
 	std::cout << "Shader created with ID " << shader.getID() << std::endl;
 	// -------------------------------------------------------------------------------------
 
-	// Create a texture using the new Texture2d class ------------------------------------------
-	Texture2d texture("container.jpg");
-	std::cout << "Texture2d created with ID " << texture.getID() << std::endl;
+	// Create a texture using the new Texture2d class --------------------------------------
+	Texture2d boxTexture("resources/textures/container.jpg", true, false);
 	// -------------------------------------------------------------------------------------
+	// Create another texture using the new Texture2d class --------------------------------
+	Texture2d linuxTexture("resources/textures/linux.png", true, true);
+	// -------------------------------------------------------------------------------------
+
 
 	// Create vertex and buffer data, configure vertex attributes
 	// -----------------------------------------------------------
@@ -72,7 +75,7 @@ int main()
 		 0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   //top right
 		 0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  //bottom right
 		-0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //bottom left
-		-0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f //top left
+		-0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f //top left
 	};
 	
 	// Indices to create 2 triangles if using an EBO
@@ -120,6 +123,15 @@ int main()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // uncomment to draw in WIREFRAME mode
 	// -----------------------------------------------------------
 
+	// Use the shader program we've created before setting the uniform values for the sampler2D uniforms
+	shader.useShader();
+
+	// Since we are using 2 texture units, we need to tell openGL which texture unit each shader sampler2D uniform 
+	//	belongs to before rendering, this is done by setting the uniform attribute in the shader as below:
+	shader.setInt("boxTex", 0);		// these names correspond to the uniform variable names in the fragment shader
+	shader.setInt("linuxTex", 1);
+
+
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -129,14 +141,26 @@ int main()
 		// Render
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);	//Clear screen with a grey/green color
 		glClear(GL_COLOR_BUFFER_BIT);			// Actually clear the screen
+		
 		shader.useShader();
-		texture.bindTexture(); // teture is left bound in the constructor, so this is unnecessary, however I wanted to make sure I know how the binding works so I was playing around with this and the unbindTexture() function I created
+		
+		// Using texture units to blend 2 textures in a single shader
+		// ACtivate texture unit 0, then bind the box texture to it
+		glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, boxTexture.getID());
+		boxTexture.bindTexture(); 
+
+		glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, linuxTexture.getID());
+		linuxTexture.bindTexture();
+
 
 		// Create a color change from red to black and back to red based on time
 		//float timeVal = glfwGetTime();
 		//float redValue = sin(timeVal) / 2.0f + 0.5f;
-		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+		//int vertexColorLocation = glGetUniformLocation(shader.getID(), "ourColor");
 		//glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);
+
 
 		//2. Set a horizontal offset via a uniform that we add to the vertex shader
 		float xOffset = 0.0f; //set triangle back to center but left this offset in
